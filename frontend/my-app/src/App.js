@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          chathura
+          kavindu
         </a>
       </header>
     </div>
