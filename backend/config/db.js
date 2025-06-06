@@ -18,7 +18,7 @@ async function testConnection() {
     console.log('✅ Connected to the database.');
     connection.release();
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
+    console.error('❌ Databasee connection failed:', error.message);
     process.exit(1);
   }
 }
