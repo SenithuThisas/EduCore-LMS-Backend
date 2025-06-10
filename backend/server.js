@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const db = require('./config/db'); // ✅ MySQL DB connection
 const authRoutes = require('./routes/auth');
-const dashboardRoutes = require('./routes/dashboard');
+// const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use('/api/auth', authRoutes);
 console.log('✅ Auth routes mounted at /api/auth');
 
 // Dashboard routes (e.g., /api/dashboard)
-app.use('/api/dashboard', dashboardRoutes);
+// app.use('/api/dashboard', dashboardRoutes);
 
 // -------------------- 404 Handler --------------------
 
