@@ -4,6 +4,7 @@ const db = require('../config/db');
 
 // Login controller
 const login = async (req, res) => {
+  console.log('🔐 /api/auth/login route was hit');
   try {
     const { username, email, password } = req.body;
 
