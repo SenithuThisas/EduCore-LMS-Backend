@@ -4,11 +4,9 @@ const db = require('../config/db');
 
 // Login controller
 const login = async (req, res) => {
-<<<<<<< HEAD
 
-=======
   console.log('🔐 /api/auth/login route was hit');
->>>>>>> ceff9376bc886c1ec7801a4eb52e18d7fa56b1a0
+// ceff9376bc886c1ec7801a4eb52e18d7fa56b1a0
   try {
     const { username, email, password } = req.body;
 
