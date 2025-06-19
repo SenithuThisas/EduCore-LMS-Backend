@@ -13,6 +13,7 @@ const login = async (req, res) => {
 
     // Input validation
     if ((!username && !email) || !password) {
+      console.log(`Login failed: Missing credentials for user: ${username || email}`);
       return res.status(400).json({ message: 'Username/Email and password are required!' });
     }
 
@@ -38,12 +39,14 @@ const login = async (req, res) => {
 );
 const user = users[0];
 if (!user) {
+  console.log(`Login failed: User not found for ${username || email}`);
   return res.status(401).json({ message: 'Invalid username/email or password' });
 }
 
 // Compare password with bcrypt
 const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 if (!isPasswordValid) {
+  console.log(`Login failed: Incorrect password for user: ${username || email}`);
   return res.status(401).json({ message: 'Invalid username/email or password' });
 }
 
@@ -60,6 +63,7 @@ if (!isPasswordValid) {
     );
 
     // Respond with user info and token
+    console.log(`Login successful for user: ${user.email || user.username}`);
     res.json({
       message: 'Login successful!',
       token,
