@@ -5,10 +5,17 @@ require('dotenv').config();
 const db = require('./config/db'); // ✅ MySQL DB connection
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
+const adminDashRoutes = require('./routes/adminDash');
+
+
+
 
 const app = express();
 
 // -------------------- Middleware --------------------
+
+
+app.use('/api', adminDashRoutes); // Register the route with the '/api' prefix
 
 // Enable CORS to allow requests from frontend (e.g., React)
 app.use(cors());
@@ -27,8 +34,10 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 console.log('✅ Auth routes mounted at /api/auth');
 
-// Dashboard routes (e.g., /api/dashboard)
+// Dashboard routes (e.g., /api/dashboard/adminDash)
 app.use('/api/dashboard', dashboardRoutes);
+
+
 
 // -------------------- 404 Handler --------------------
 
