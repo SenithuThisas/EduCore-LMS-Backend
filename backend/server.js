@@ -6,6 +6,8 @@ const db = require('./config/db'); // ✅ MySQL DB connection
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const adminDashRoutes = require('./routes/adminDash');
+const studentRoutes = require('./routes/students');       // Plural
+const coordinatorRoutes = require('./routes/coordinators'); // Plural
 
 const app = express();
 
@@ -20,9 +22,6 @@ app.use(cors({
 // Parse incoming JSON requests
 app.use(express.json());
 
-// Register admin dashboard routes with the '/api' prefix
-app.use('/api', adminDashRoutes);
-
 // -------------------- Routes --------------------
 
 // Health check route (optional but useful for testing)
@@ -36,6 +35,13 @@ console.log('✅ Auth routes mounted at /api/auth');
 
 // Dashboard routes (e.g., /api/dashboard/adminDash)
 app.use('/api/dashboard', dashboardRoutes);
+
+// User management routes (PLURAL)
+app.use('/api/students', studentRoutes);
+app.use('/api/coordinators', coordinatorRoutes);
+
+// Admin dashboard routes
+app.use('/api', adminDashRoutes);
 
 // -------------------- 404 Handler --------------------
 
