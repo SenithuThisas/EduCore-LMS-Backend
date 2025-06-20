@@ -7,21 +7,21 @@ const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const adminDashRoutes = require('./routes/adminDash');
 
-
-
-
 const app = express();
 
 // -------------------- Middleware --------------------
 
-
-app.use('/api', adminDashRoutes); // Register the route with the '/api' prefix
-
-// Enable CORS to allow requests from frontend (e.g., React)
-app.use(cors());
+// Enable CORS with specific origin and credentials
+app.use(cors({
+  origin: 'http://localhost:3000', // <-- Your frontend's URL
+  credentials: true                // <-- Allow cookies/auth headers
+}));
 
 // Parse incoming JSON requests
 app.use(express.json());
+
+// Register admin dashboard routes with the '/api' prefix
+app.use('/api', adminDashRoutes);
 
 // -------------------- Routes --------------------
 
@@ -36,8 +36,6 @@ console.log('✅ Auth routes mounted at /api/auth');
 
 // Dashboard routes (e.g., /api/dashboard/adminDash)
 app.use('/api/dashboard', dashboardRoutes);
-
-
 
 // -------------------- 404 Handler --------------------
 
@@ -56,7 +54,7 @@ app.use((err, req, res, next) => {
 
 // -------------------- Server Startup --------------------
 
-const PORT = process.env.PORT || 3458;
+const PORT = process.env.PORT || 3460; // Make sure this matches your running port!
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
