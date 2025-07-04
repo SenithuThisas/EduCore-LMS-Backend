@@ -4,14 +4,17 @@ require('dotenv').config();
 
 const db = require('./config/db'); // ✅ MySQL DB connection
 const authRoutes = require('./routes/auth');
-// const dashboardRoutes = require('./routes/dashboard');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
 // -------------------- Middleware --------------------
 
-// Enable CORS to allow requests from frontend (e.g., React)
-app.use(cors());
+// Enable CORS with specific origin and credentials
+app.use(cors({
+  origin: 'http://localhost:3000', // <-- Your frontend's URL
+  credentials: true                // <-- Allow cookies/auth headers
+}));
 
 // Parse incoming JSON requests
 app.use(express.json());
@@ -28,7 +31,7 @@ app.use('/api/auth', authRoutes);
 console.log('✅ Auth routes mounted at /api/auth');
 
 // Dashboard routes (e.g., /api/dashboard)
-// app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // -------------------- 404 Handler --------------------
 
@@ -47,7 +50,7 @@ app.use((err, req, res, next) => {
 
 // -------------------- Server Startup --------------------
 
-const PORT = process.env.PORT || 3458;
+const PORT = process.env.PORT || 3460; // Make sure this matches your running port!
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
