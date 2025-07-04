@@ -40,7 +40,7 @@ const login = async (req, res) => {
         email: user.email
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' } // Shorter expiry for security
+      { expiresIn: '1min' } // Shorter expiry for security
     );
 
     // Respond with user info and token
