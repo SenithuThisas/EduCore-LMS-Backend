@@ -6,6 +6,8 @@ const db = require('./config/db'); // ✅ MySQL DB connection
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const adminDashRoutes = require('./routes/adminDash');
+const studentsRoutes = require('./routes/students');
+const coordinatorsRoutes = require('./routes/coordinators');
 
 const app = express();
 
@@ -36,6 +38,14 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // Admin Dash routes (e.g., /api/adminDash)
 app.use('/api', adminDashRoutes);
+
+// Students routes (e.g., /api/students)
+app.use('/api/students', studentsRoutes);
+console.log('✅ Students routes mounted at /api/students');
+
+// Coordinators routes (e.g., /api/coordinators)
+app.use('/api/coordinators', coordinatorsRoutes);
+console.log('✅ Coordinators routes mounted at /api/coordinators');
 
 // -------------------- 404 Handler --------------------
 
