@@ -47,6 +47,9 @@ console.log('✅ Students routes mounted at /api/students');
 app.use('/api/coordinators', coordinatorsRoutes);
 console.log('✅ Coordinators routes mounted at /api/coordinators');
 
+const batchesRoutes = require('./routes/batches');
+app.use('/api', batchesRoutes);
+
 // -------------------- 404 Handler --------------------
 
 // Handle unknown routes
