@@ -50,6 +50,10 @@ console.log('✅ Coordinators routes mounted at /api/coordinators');
 const batchesRoutes = require('./routes/batches');
 app.use('/api', batchesRoutes);
 
+const coursesRoutes = require('./routes/courses');
+app.use('/api/courses', coursesRoutes);
+
+
 // -------------------- 404 Handler --------------------
 
 // Handle unknown routes
