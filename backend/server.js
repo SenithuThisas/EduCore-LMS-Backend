@@ -67,6 +67,9 @@ app.use((err, req, res, next) => {
 
 // -------------------- Server Startup --------------------
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static('uploads'));
+
 const PORT = process.env.PORT || 3460; // Make sure this matches your running port!
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
