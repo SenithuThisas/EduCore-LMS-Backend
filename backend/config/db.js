@@ -1,4 +1,3 @@
-// db.js
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
@@ -18,7 +17,7 @@ async function testConnection() {
     console.log('✅ Connected to the database.');
     connection.release();
   } catch (error) {
-    console.error('❌ Databasee connection failed:', error.message);
+    console.error('❌ Database connection failed:', error.message);
     process.exit(1);
   }
 }
