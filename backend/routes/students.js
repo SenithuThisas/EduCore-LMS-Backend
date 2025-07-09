@@ -16,92 +16,68 @@ router.get('/', async (req, res) => {
 
 // Add new student
 router.post('/', async (req, res) => {
-  const { username, email, password, ...studentData } = req.body;
-  
+  const { username, email, password, profileImg, ...studentData } = req.body;
+
   try {
-    // Generate unique student ID
     const [lastStudent] = await db.query(
       'SELECT user_id FROM students ORDER BY user_id DESC LIMIT 1'
     );
     const lastId = lastStudent[0]?.user_id || 'S000';
     const newId = `S${(parseInt(lastId.substring(1)) + 1).toString().padStart(3, '0')}`;
-    
-    // Hash password
+
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
-    
-    // Start transaction
+
     await db.beginTransaction();
-    
-    // Insert into users table
+
     await db.query(
       `INSERT INTO users (user_id, username, email, password_hash, role) 
        VALUES (?, ?, ?, ?, 'Student')`,
       [newId, username, email, passwordHash]
     );
-    
-    // Insert into students table
+
+    console.log('Inserting student with data:', {
+      user_id: newId,
+      profile_picture: profileImg,
+      first_name: studentData.firstName,
+      last_name: studentData.lastName,
+      full_name: `${studentData.firstName} ${studentData.lastName}`,
+      gender: studentData.gender,
+      date_of_birth: studentData.dateOfBirth,
+      course: studentData.course,
+      batch: studentData.batch,
+      NIC: studentData.nic,
+      mobile_number: studentData.mobileNumber,
+      parents_number: studentData.parentsNumber,
+    });
+
     await db.query(
       `INSERT INTO students SET ?`,
       {
         user_id: newId,
-        ...studentData,
-        full_name: `${studentData.first_name} ${studentData.last_name}`
+        profile_picture: profileImg,
+        first_name: studentData.firstName,
+        last_name: studentData.lastName,
+        full_name: `${studentData.firstName} ${studentData.lastName}`,
+        gender: studentData.gender,
+        date_of_birth: studentData.dateOfBirth,
+        course: studentData.course,
+        batch: studentData.batch,
+        NIC: studentData.nic,
+        mobile_number: studentData.mobileNumber,
+        parents_number: studentData.parentsNumber
       }
     );
-    
+
     await db.commit();
     res.status(201).json({ message: 'Student created successfully', user_id: newId });
+
   } catch (error) {
     await db.rollback();
-    console.error(error);
+    console.error('❌ Error during student creation:', error);
     res.status(500).json({ error: 'Failed to create student' });
   }
 });
 
-// Update student
-router.put('/:id', async (req, res) => {
-  const userId = req.params.id;
-  const studentData = req.body;
-  
-  try {
-    if (studentData.first_name && studentData.last_name) {
-      studentData.full_name = `${studentData.first_name} ${studentData.last_name}`;
-    }
-    
-    await db.query(
-      'UPDATE students SET ? WHERE user_id = ?',
-      [studentData, userId]
-    );
-    
-    res.json({ message: 'Student updated successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to update student' });
-  }
-});
-
-// Delete student
-router.delete('/:id', async (req, res) => {
-  const userId = req.params.id;
-  
-  try {
-    // Transaction ensures both user and student are deleted
-    await db.beginTransaction();
-    
-    // Delete from students table
-    await db.query('DELETE FROM students WHERE user_id = ?', [userId]);
-    
-    // Delete from users table
-    await db.query('DELETE FROM users WHERE user_id = ?', [userId]);
-    
-    await db.commit();
-    res.status(204).send();
-  } catch (error) {
-    await db.rollback();
-    console.error(error);
-    res.status(500).json({ error: 'Failed to delete student' });
-  }
-});
-
+// Export the router so it can be mounted in server.js
 module.exports = router;
