@@ -53,6 +53,12 @@ app.use('/api', batchesRoutes);
 const coursesRoutes = require('./routes/courses');
 app.use('/api/courses', coursesRoutes);
 
+const coordinatorDashRoutes = require('./routes/coordinatorDash');
+app.use('/api/coordinatorDash', coordinatorDashRoutes);
+
+
+
+
 
 // -------------------- 404 Handler --------------------
 
