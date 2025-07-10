@@ -14,6 +14,36 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Add this route before the POST route
+router.get('/next-id/:batch', async (req, res) => {
+  try {
+    const { batch } = req.params;
+    
+    const [existing] = await db.query(
+      "SELECT user_id FROM students WHERE batch = ? AND user_id LIKE ? ORDER BY user_id DESC LIMIT 1", 
+      [batch, `${batch}-%`]
+    );
+    
+    let nextNum = 1;
+    if (existing.length > 0 && existing[0].user_id) {
+      const lastId = existing[0].user_id;
+      const parts = lastId.split('-');
+      if (parts.length >= 2) {
+        const numPart = parts[parts.length - 1];
+        const num = parseInt(numPart, 10);
+        if (!isNaN(num)) nextNum = num + 1;
+      }
+    }
+    
+    const nextUserId = `${batch}-${String(nextNum).padStart(4, '0')}`;
+    res.json({ nextUserId });
+    
+  } catch (error) {
+    console.error('❌ Error generating next ID:', error);
+    res.status(500).json({ error: 'Failed to generate next ID' });
+  }
+});
+
 // POST /api/students — add new student
 router.post('/', async (req, res) => {
   const { username, email, password, profileImg, ...studentData } = req.body;
@@ -24,18 +54,46 @@ router.post('/', async (req, res) => {
 
     // Generate user_id (batch-based student number)
     const batch = studentData.batch;
+    console.log('🔍 Generating ID for batch:', batch);
+    console.log('🔍 Full studentData:', studentData); // Debug log
+    
+    // Validate batch value
+    if (!batch || batch.trim() === '') {
+      throw new Error('Batch value is empty or undefined');
+    }
+    
     const [existing] = await conn.query(
-      "SELECT user_id FROM students WHERE batch = ? ORDER BY user_id DESC LIMIT 1", [batch]
+      "SELECT user_id FROM students WHERE batch = ? AND user_id LIKE ? ORDER BY user_id DESC LIMIT 1", 
+      [batch, `${batch}-%`]
     );
+    
+    console.log('📊 Existing students found:', existing);
+    
     let nextNum = 1;
     if (existing.length > 0 && existing[0].user_id) {
       const lastId = existing[0].user_id;
+      console.log('🔢 Last ID found:', lastId);
+      
       const parts = lastId.split('-');
-      const numPart = parts[parts.length - 1];
-      const num = parseInt(numPart, 10);
-      if (!isNaN(num)) nextNum = num + 1;
+      console.log('🔧 Split parts:', parts); // Debug log
+      
+      if (parts.length >= 2) {
+        const numPart = parts[parts.length - 1];
+        console.log('🔧 Number part:', numPart); // Debug log
+        const num = parseInt(numPart, 10);
+        if (!isNaN(num)) nextNum = num + 1;
+      }
     }
+    
     const newUserId = `${batch}-${String(nextNum).padStart(4, '0')}`;
+    console.log('✨ Generated new user ID:', newUserId);
+    console.log('✨ Batch value used:', `"${batch}"`); // Debug log
+    console.log('✨ Next number:', nextNum); // Debug log
+
+    // Validate the generated ID before using it
+    if (newUserId.endsWith('-')) {
+      throw new Error('Generated user ID is incomplete');
+    }
 
     // Hash password
     const saltRounds = 10;
@@ -73,7 +131,8 @@ router.post('/', async (req, res) => {
   } catch (error) {
     if (conn) await conn.rollback();
     console.error('❌ Error during student creation:', error);
-    res.status(500).json({ error: 'Failed to create student' });
+    console.error('❌ Full error details:', error.message); // More detailed error
+    res.status(500).json({ error: 'Failed to create student', details: error.message });
   } finally {
     if (conn) conn.release();
   }
