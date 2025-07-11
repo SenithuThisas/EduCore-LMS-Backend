@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const db = require('./config/db'); // ✅ MySQL DB connection
@@ -19,8 +20,13 @@ app.use(cors({
   credentials: true                // <-- Allow cookies/auth headers
 }));
 
+// Increase body size limits for handling large images
+app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));
+
 // Parse incoming JSON requests
-app.use(express.json());
+// app.use(express.json({ limit: '50mb' }));
+// app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // -------------------- Routes --------------------
 
