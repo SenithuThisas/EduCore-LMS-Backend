@@ -65,6 +65,8 @@ app.use('/api/coordinatorDash', coordinatorDashRoutes);
 const attendanceRoutes = require('./routes/attendance');
 app.use('/api/attendance', attendanceRoutes);
 
+const assignmentsRoutes = require('./routes/assignments');
+app.use('/api/assignments', assignmentsRoutes);
 
 
 
