@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { pool } = require('../config/database');
+const { pool } = require('../config/db');
+const { has: isBlacklisted } = require('../utils/tokenBlacklist');
 
 const authMiddleware = async (req, res, next) => {
     try {
@@ -10,6 +11,11 @@ const authMiddleware = async (req, res, next) => {
         }
 
         const token = authHeader.split(' ')[1];
+
+        // Check if token is blacklisted
+        if (isBlacklisted(token)) {
+            return res.status(401).json({ message: 'Token has been logged out' });
+        }
 
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
