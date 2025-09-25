@@ -68,7 +68,8 @@ app.use('/api/attendance', attendanceRoutes);
 const assignmentsRoutes = require('./routes/assignments');
 app.use('/api/assignments', assignmentsRoutes);
 
-
+const departmentRoutes = require('./routes/department');
+app.use('/api/departments', departmentRoutes);
 
 // -------------------- 404 Handler --------------------
 
